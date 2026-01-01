@@ -12,4 +12,15 @@ public class Player {
         this.attempts = attempts;
         this.result = result;
     }
+
+    public Player(String name, int attempts, String result) {
+        this.name = name;
+        this.attempts = attempts;
+        this.result = result;
+    }
+
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public int getAttempts() { return attempts; }
+    public String getResult() { return result; }
 }
