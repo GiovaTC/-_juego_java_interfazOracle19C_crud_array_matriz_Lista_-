@@ -1,17 +1,101 @@
 package ui;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class GameUI {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import dao.GameDAO;
+import model.Player;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class GameUI extends JFrame {
+
+    private GameDAO dao = new GameDAO();
+
+    int[] lives = {3}; // ARRAY -> vidas
+
+    int[][] board = new int[3][3]; // MATRIZ -> tablero 3x3
+
+    List<String> history = new ArrayList<>(); // lista -> historial
+
+    int attempts = 0;
+    String playerName;
+
+    public GameUI() {
+        setTitle("Juego CRUD Oracle 19c");
+        setSize(500, 500);
+        setLayout(new BorderLayout());
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        playerName = JOptionPane.showInputDialog("Ingrese su nombre:");
+
+        generateBoard();
+
+        JPanel grid = new JPanel(new GridLayout(3,3));
+        add(grid, BorderLayout.CENTER);
+
+        for(int i=0;i<3;i++){
+            for(int j=0;j<3;j++){
+                JButton btn = new JButton("?");
+                int x=i,y=j;
+                btn.addActionListener(e -> play(x,y,btn));
+                grid.add(btn);
+            }
         }
+
+        JButton crudBtn = new JButton("Ver Registros");
+        crudBtn.addActionListener(e -> showDBRecords());
+        add(crudBtn, BorderLayout.SOUTH);
+
+        setVisible(true);
+    }
+
+    void generateBoard(){
+        Random r = new Random();
+        int x = r.nextInt(3);
+        int y = r.nextInt(3);
+        board[x][y] = 1;
+    }
+
+    void play(int x,int y,JButton btn){
+        attempts++;
+
+        if(board[x][y] == 1){
+            btn.setBackground(Color.GREEN);
+            JOptionPane.showMessageDialog(this,"Ganaste!");
+
+            history.add("Ganó en " + attempts + " intentos");
+            dao.save(new Player(playerName, attempts, "GANÓ"));
+            return;
+        }
+
+        btn.setBackground(Color.RED);
+        lives[0]--;
+
+        if(lives[0] == 0){
+            JOptionPane.showMessageDialog(this,"Perdiste!");
+            history.add("Perdió");
+            dao.save(new Player(playerName, attempts, "PERDIÓ"));
+        }
+    }
+
+    void showDBRecords(){
+        List<Player> players = dao.findAll();
+        StringBuilder sb = new StringBuilder("REGISTROS:\n\n");
+
+        for(Player p : players){
+            sb.append("ID: ").append(p.getId())
+                    .append(" | ").append(p.getName())
+                    .append(" | Intentos: ").append(p.getAttempts())
+                    .append(" | Resultado: ").append(p.getResult())
+                    .append("\n");
+        }
+
+        JOptionPane.showMessageDialog(this, sb.toString());
+    }
+
+    public static void main(String[] args) {
+        new GameUI();
     }
 }
