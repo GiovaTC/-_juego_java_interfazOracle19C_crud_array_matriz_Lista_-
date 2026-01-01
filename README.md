@@ -5,6 +5,8 @@
 
 <img width="2550" height="1079" alt="image" src="https://github.com/user-attachments/assets/4227853e-dbb9-4f03-9c28-305cfb14b300" />    
 
+<img width="2552" height="1079" alt="image" src="https://github.com/user-attachments/assets/cb4b9463-e13f-42a5-a971-355535f38c46" />    
+
 Solución profesional lista para ejecutar en IntelliJ IDEA :
 
 Implementa:
